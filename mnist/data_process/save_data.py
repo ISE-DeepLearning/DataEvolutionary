@@ -93,9 +93,15 @@ def test():
 
     data = Image.open('../training_pics/0/train_0_7.png').convert('L')
     data = np.array(data).reshape((784,))
-    print(data)
+    print(images_npy_datas[0].reshape((28, 28)))
+    print('[')
+    for i in range(28):
+        data = [str(images_npy_datas[0].reshape((28, 28))[i][j]) for j in range(28)]
+        data_str = '[' + (','.join(data)) + '],'
+        print(data_str)
+    print(']')
     # 经过对比 0.npy的第一条数据 同 train_0的第一张图片二者的数据是相同的，验证数据的相同
-    print(data == (images_npy_datas[0] * 255).astype(np.uint8))
+    # print(data == (images_npy_datas[0] * 255).astype(np.uint8))
     # not recommanded 浮点数的精度问题决定了不适合进行比较
     # print(data/255 == images_npy_datas[0])
 
@@ -105,5 +111,5 @@ if __name__ == '__main__':
     # save_test_npy()
     # save_training_pics()
     # save_test_pics()
-    # test()
+    test()
     pass
