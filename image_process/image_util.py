@@ -153,7 +153,7 @@ fill represents the pixels data that filled in (or padding)
 def rotate(image_data, angle, fill=0, shape=None):
     if shape is not None:
         image_data = np.reshape(image_data, shape)
-    image = Image.fromarray(image_data*255)
+    image = Image.fromarray(image_data * 255)
     im2 = image.convert('RGBA')
     out = im2.rotate((angle / math.pi) * 180)
     cover = Image.new('RGBA', out.size, (fill * 255, fill * 255, fill * 255))
@@ -175,8 +175,8 @@ fill represents the pixels data that filled in (or padding)
 def move(image_data, x=0, y=0, fill=0, shape=None):
     result = np.copy(image_data)
     # get the absolute x and y value
-    abs_x = math.fabs(x)
-    abs_y = math.fabs(y)
+    abs_x = int(math.fabs(x))
+    abs_y = int(math.fabs(y))
     if shape is not None:
         image_data = np.reshape(image_data, shape)
     # get the shape of this image
