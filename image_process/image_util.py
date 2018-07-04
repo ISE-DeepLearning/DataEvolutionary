@@ -1,6 +1,7 @@
 # -*- coding=utf-8 -*-
 import numpy as np
 import math
+from PIL import Image
 
 # x represents row
 # y represents column
@@ -40,7 +41,7 @@ def find_center(image_data, shape=None):
         image_data = np.reshape(image_data, shape)
     data = np.where(image_data > threshold)
     top, bottom = min(data[0]), max(data[0])
-    left, right = min(data[1], max(data[1]))
+    left, right = min(data[1]), max(data[1])
     return (top + bottom + 1) // 2, (left + right + 1) // 2
 
 
@@ -139,7 +140,8 @@ def cal_angel(image_data, shape=None):
     if top_average[1] == bottom_average[1]:
         return math.pi / 2
     else:
-        return math.atan((top_average[0] - bottom_average[0]) / (bottom_average[1] - top_average[1]))
+        result = math.atan((bottom_average[0] - top_average[0]) / (top_average[1] - bottom_average[1]))
+        return result if result > 0 else result + math.pi
 
 
 '''
@@ -151,7 +153,15 @@ fill represents the pixels data that filled in (or padding)
 def rotate(image_data, angle, fill=0, shape=None):
     if shape is not None:
         image_data = np.reshape(image_data, shape)
-    pass
+    image = Image.fromarray(image_data*255)
+    im2 = image.convert('RGBA')
+    out = im2.rotate((angle / math.pi) * 180)
+    cover = Image.new('RGBA', out.size, (fill * 255, fill * 255, fill * 255))
+    out = Image.composite(out, cover, out)
+    out = out.convert('L')
+    data = np.array(out.getdata()) / 255.0
+
+    return data.reshape(np.shape(image_data))
 
 
 '''

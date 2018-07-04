@@ -2,6 +2,7 @@
 import image_util as util
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 
 def load_data(number, index):
@@ -120,6 +121,24 @@ def test_join4():
     vision_join(join, image)
 
 
+def test_center():
+    pic = load_data(8, 1).reshape(28, 28)
+    print(util.find_center(pic))
+    vision_cut(pic)
+
+
+def test_angle():
+    pic = load_data(7, 100).reshape(28, 28)
+    print(util.cal_angel(pic))
+    # vision_cut(pic)
+
+
+def test_rotate():
+    pic = load_data(7, 100).reshape(28, 28)
+    test = util.rotate(pic,math.pi/8)
+    vision_cut(test)
+
+
 if __name__ == '__main__':
     # vision(load_data(3, 3))
-    test_join4()
+    test_rotate()
