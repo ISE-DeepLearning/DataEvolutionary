@@ -5,12 +5,14 @@ import numpy as np
 import scipy.misc
 import os
 import random
+import math
 
 # generate the split and join image data
 # generate the mix up image data
 
 original_data_path = '../mnist/training_npy/'
 center_data_save_path = '../mnist/center/'
+mix_up_save_path = '../mnist/mix_up/'
 
 
 def generate_center_image():
@@ -112,11 +114,55 @@ def generate_4_part_samples():
         np.save(os.path.join(cross_npy_path, str(i) + '.npy'), cross_samples)
 
 
-def generate_mix_up_samples():
-    pass
+def generate_mix_up_samples(mode='max'):
+    for i in range(10):
+        # n*784 data
+        original_datas = np.load(os.path.join(original_data_path, str(i) + '.npy'))
+        # n centers
+        center_datas = [util.find_center(data, shape=(28, 28)) for data in original_datas]
+        # n angels
+        angle_datas = [util.cal_angle(data, shape=(28, 28)) for data in original_datas]
+        # generate npy save path
+        mode_npy_save_path = os.path.join(mix_up_save_path, mode + '/npy')
+        if not os.path.exists(mode_npy_save_path):
+            os.makedirs(mode_npy_save_path)
+        # generate image save path
+        mode_image_save_path = os.path.join(mix_up_save_path, mode + '/img/' + str(i))
+        if not os.path.exists(mode_image_save_path):
+            os.makedirs(mode_image_save_path)
+        datas = []
+        for j in range(len(original_datas)):
+            print(str(i) + '_' + str(j))
+            index1 = random.randint(0, len(original_datas) - 1)
+            index2 = random.randint(0, len(original_datas) - 1)
+            data1 = original_datas[index1]
+            data2 = original_datas[index2]
+            center1 = center_datas[index1]
+            center2 = center_datas[index2]
+            angle1 = angle_datas[index1]
+            angle2 = angle_datas[index2]
+            change_angle = math.fabs(angle1 - angle2)
+            if angle1 > angle2:
+                data2 = util.rotate(data2, change_angle, fill=0, shape=(28, 28))
+            else:
+                data1 = util.rotate(data1, change_angle, fill=0, shape=(28, 28))
+            # data1 center move to data2 center
+            data1 = util.move(data1, x=center2[0] - center1[0], y=center2[1] - center1[1], shape=(28, 28))
+            # mix up two random image data
+            mix_up_data = util.mix(data1, data2, mode=mode, shape=(28, 28))
+            scipy.misc.toimage(mix_up_data.reshape((28, 28)), cmin=0.0, cmax=1.0).save(
+                os.path.join(mode_image_save_path, str(i) + '_' + str(j) + '.png'))
+            datas.append(mix_up_data.flatten())
+        np.save(os.path.join(mode_npy_save_path, str(i) + '.npy'), datas)
 
 
 if __name__ == '__main__':
-    # generate_vertical_samples()
-    # generate_4_part_samples()
+    # generate_center_image()
+    generate_vertical_samples()
+    generate_horizontal_samples()
+    generate_4_part_samples()
+    # generate_mix_up_samples('max')
+    # generate_mix_up_samples('min')
+    # generate_mix_up_samples('average')
+    # generate_mix_up_samples('add')
     pass

@@ -122,12 +122,12 @@ def fat(image_data, shape=None):
 
 
 '''
-return the angel value of the image
+return the angle value of the image
 note: This is NOT the actual angel that the picture looks like in.
 '''
 
 
-def cal_angel(image_data, shape=None):
+def cal_angle(image_data, shape=None):
     if shape is not None:
         image_data = np.reshape(image_data, shape)
     data = np.where(image_data > threshold)
@@ -218,7 +218,10 @@ mix two images
 '''
 
 
-def mix(image1, image2, mode='max'):
+def mix(image1, image2, mode='max', shape=None):
+    if shape is not None:
+        image1 = np.reshape(image1, shape)
+        image2 = np.reshape(image2, shape)
     result = None
     image1 = np.array(image1)
     image2 = np.array(image2)
