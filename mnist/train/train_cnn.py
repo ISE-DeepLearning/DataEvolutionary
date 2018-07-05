@@ -11,6 +11,7 @@ from keras.optimizers import SGD, Adam
 from keras.utils import np_utils
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
+import os
 import data_query as dq
 import json
 
@@ -77,6 +78,10 @@ def train_model_process(model_save_path, train_images, train_labels, test_images
 
 if __name__ == '__main__':
     rate = 0.1
+
+    if not os.path.exists('./cnn_models/' + str(rate)):
+        os.makedirs('./cnn_models/' + str(rate))
+
     # mix max
     train_data, train_label = dq.original_and_mix_max_data(rate)
     train_data = np.reshape(train_data, (-1, 28, 28, 1))

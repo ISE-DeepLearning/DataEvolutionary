@@ -6,6 +6,7 @@ from keras.layers import Dense, Activation
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 import json
+import os
 import data_query as dq
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
@@ -50,6 +51,10 @@ def model_train_process(model_save_path, train_images, train_labels, test_images
 
 if __name__ == '__main__':
     rate = 0.1
+
+    if not os.path.exists('./dnn_models/' + str(rate)):
+        os.makedirs('./dnn_models/' + str(rate))
+
     # mix max
     train_data, train_label = dq.original_and_mix_max_data(rate)
     print(np.shape(train_data))
