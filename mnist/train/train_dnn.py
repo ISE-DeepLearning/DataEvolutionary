@@ -49,42 +49,71 @@ def model_train_process(model_save_path, train_images, train_labels, test_images
 
 
 if __name__ == '__main__':
+    rate = 0.1
     # mix max
     train_data, train_label = dq.original_and_mix_max_data()
     print(np.shape(train_data))
     print(np.shape(train_label))
-    model_train_process('./dnn_models/mix_max_model.hdf5', train_data, train_label, test_images=mnist.test.images,
+    model_train_process('./dnn_models/' + str(rate) + '/mix_max_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
                         test_labels=mnist.test.labels)
 
     # double
     train_data, train_label = dq.double_original_training_data()
     print(np.shape(train_data))
     print(np.shape(train_label))
-    model_train_process('./dnn_models/double_samples_model.hdf5', train_data, train_label, test_images=mnist.test.images,
+    print(np.shape(train_label))
+    model_train_process('./dnn_models/' + str(rate) + '/double_samples_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
                         test_labels=mnist.test.labels)
 
     # mix min
     train_data, train_label = dq.original_and_mix_min_data()
     print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/mix_min_model.hdf5', train_data, train_label, test_images=mnist.test.images,
+    model_train_process('./dnn_models/' + str(rate) + '/mix_min_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
                         test_labels=mnist.test.labels)
 
     # mix average
     train_data, train_label = dq.original_and_mix_average_data()
     print(np.shape(train_data))
     print(np.shape(train_label))
-    model_train_process('./dnn_models/mix_average_model.hdf5', train_data, train_label, test_images=mnist.test.images,
+    model_train_process('./dnn_models/' + str(rate) + '/mix_average_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
                         test_labels=mnist.test.labels)
 
     # mix add
     train_data, train_label = dq.original_and_mix_add_data()
     print(np.shape(train_data))
     print(np.shape(train_label))
-    model_train_process('./dnn_models/mix_add_model.hdf5', train_data, train_label, test_images=mnist.test.images,
+    model_train_process('./dnn_models/' + +str(rate) + +'/mix_add_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
                         test_labels=mnist.test.labels)
 
+    # horizontal
+    train_data, train_label = dq.original_and_horizontal_data()
+    print(np.shape(train_data))
+    print(np.shape(train_label))
+    model_train_process('./dnn_models/' + str(rate) + '/horizontal_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
+                        test_labels=mnist.test.labels)
+
+    # vertical
+    train_data, train_label = dq.original_and_vertical_data()
+    print(np.shape(train_data))
+    print(np.shape(train_label))
+    model_train_process('./dnn_models/' + str(rate) + '/vertical_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
+                        test_labels=mnist.test.labels)
+
+    # mix max
+    train_data, train_label = dq.original_and_cross_data()
+    print(np.shape(train_data))
+    print(np.shape(train_label))
+    model_train_process('./dnn_models/' + str(rate) + '/cross_model.hdf5', train_data, train_label,
+                        test_images=mnist.test.images,
+                        test_labels=mnist.test.labels)
     # save data
-    with open('dnn_result.json', 'a') as outfile:
+    with open('dnn_result_' + str(rate) + '.json', 'a') as outfile:
         json.dump(result, outfile, ensure_ascii=False)
         outfile.write('\n')

@@ -76,42 +76,70 @@ def train_model_process(model_save_path, train_images, train_labels, test_images
 
 
 if __name__ == '__main__':
+    rate = 0.1
     # mix max
     train_data, train_label = dq.original_and_mix_max_data()
     train_data = np.reshape(train_data, (-1, 28, 28, 1))
     train_label = np.array(train_label)
     test_data, test_label = mnist_data.test.images, mnist_data.test.labels
     test_data = np.reshape(test_data, (-1, 28, 28, 1))
-    train_model_process('./cnn_models/mix_max_model.hdf5', train_data, train_label,
+    train_model_process('./cnn_models/' + str(rate) + '/mix_max_model.hdf5', train_data, train_label,
                         test_images=test_data, test_labels=test_label)
     # double
     train_data, train_label = dq.double_original_training_data()
     train_data = np.reshape(train_data, (-1, 28, 28, 1))
     train_label = np.array(train_label)
-    train_model_process('./cnn_models/double_samples_model.hdf5', train_data, train_label,
+    train_model_process('./cnn_models/' + str(rate) + '/double_samples_model.hdf5', train_data, train_label,
                         test_images=test_data, test_labels=test_label)
 
     # mix min
     train_data, train_label = dq.original_and_mix_min_data()
     train_data = np.reshape(train_data, (-1, 28, 28, 1))
     train_label = np.array(train_label)
-    train_model_process('./cnn_models/mix_min_model.hdf5', train_data, train_label,
+    train_model_process('./cnn_models/' + str(rate) + '/mix_min_model.hdf5', train_data, train_label,
                         test_images=test_data, test_labels=test_label)
 
     # mix average
     train_data, train_label = dq.original_and_mix_average_data()
     train_data = np.reshape(train_data, (-1, 28, 28, 1))
     train_label = np.array(train_label)
-    train_model_process('./cnn_models/mix_average_model.hdf5', train_data, train_label,
+    train_model_process('./cnn_models/' + str(rate) + '/mix_average_model.hdf5', train_data, train_label,
                         test_images=test_data, test_labels=test_label)
 
     # mix add
     train_data, train_label = dq.original_and_mix_add_data()
     train_data = np.reshape(train_data, (-1, 28, 28, 1))
     train_label = np.array(train_label)
-    train_model_process('./cnn_models/mix_add_model.hdf5', train_data, train_label,
+    train_model_process('./cnn_models/' + str(rate) + '/mix_add_model.hdf5', train_data, train_label,
+                        test_images=test_data, test_labels=test_label)
+
+    # vertical
+    train_data, train_label = dq.original_and_vertical_data()
+    train_data = np.reshape(train_data, (-1, 28, 28, 1))
+    train_label = np.array(train_label)
+    # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
+    # test_data = np.reshape(test_data, (-1, 28, 28, 1))
+    train_model_process('./cnn_models/' + str(rate) + '/vertical_model.hdf5', train_data, train_label,
+                        test_images=test_data, test_labels=test_label)
+
+    # horizontal
+    train_data, train_label = dq.original_and_horizontal_data()
+    train_data = np.reshape(train_data, (-1, 28, 28, 1))
+    train_label = np.array(train_label)
+    # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
+    # test_data = np.reshape(test_data, (-1, 28, 28, 1))
+    train_model_process('./cnn_models/' + str(rate) + '/horizontal_model.hdf5', train_data, train_label,
+                        test_images=test_data, test_labels=test_label)
+
+    # horizontal
+    train_data, train_label = dq.original_and_cross_data()
+    train_data = np.reshape(train_data, (-1, 28, 28, 1))
+    train_label = np.array(train_label)
+    # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
+    # test_data = np.reshape(test_data, (-1, 28, 28, 1))
+    train_model_process('./cnn_models/' + str(rate) + '/cross_model.hdf5', train_data, train_label,
                         test_images=test_data, test_labels=test_label)
     # save data
-    with open('cnn_result.json', 'a') as outfile:
+    with open('cnn_result_' + str(rate) + '.json', 'a') as outfile:
         json.dump(result, outfile, ensure_ascii=False)
         outfile.write('\n')

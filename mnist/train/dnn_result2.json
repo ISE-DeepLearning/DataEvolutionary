@@ -1,0 +1,3 @@
+[{"path": "./dnn_models/horizontal_model.hdf5", "acc": 0.9752},
+  {"path": "./dnn_models/vertical_model.hdf5", "acc": 0.9756},
+  {"path": "./dnn_models/cross_model.hdf5", "acc": 0.971}]
