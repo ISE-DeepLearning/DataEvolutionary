@@ -40,6 +40,7 @@ def double_original_training_data(rate=1.0):
         label_set = np.zeros(shape=(len(image_set) + len(image_set_copy), 10))
         label_set[:, i] = 1
         images.extend(image_set)
+        images.extend(image_set_copy)
         labels.extend(label_set)
     # images = np.row_stack((images, images))
     # labels = np.row_stack((labels, labels))
