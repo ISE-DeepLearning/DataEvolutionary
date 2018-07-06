@@ -72,79 +72,102 @@ def train_model_process(model_save_path, train_images, train_labels, test_images
     score = model.evaluate(test_images, test_labels, verbose=0)
     print('测试集 score(val_loss): %.4f' % score[0])
     print('测试集 accuracy: %.4f' % score[1])
-    result.append({'path': model_save_path, 'acc': score[1]})
+    result.append({'path': model_save_path, 'val_loss': score[0], 'acc': score[1]})
     model.save(model_save_path)
 
 
 if __name__ == '__main__':
-    rate = 0.1
-
-    if not os.path.exists('./cnn_models/' + str(rate)):
-        os.makedirs('./cnn_models/' + str(rate))
-
-    # mix max
-    train_data, train_label = dq.original_and_mix_max_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
+    # rate = 0.3
+    # if not os.path.exists('./cnn_models/' + str(rate)):
+    #     os.makedirs('./cnn_models/' + str(rate))
+    result = []
     test_data, test_label = mnist_data.test.images, mnist_data.test.labels
     test_data = np.reshape(test_data, (-1, 28, 28, 1))
-    train_model_process('./cnn_models/' + str(rate) + '/mix_max_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
-    # double
-    train_data, train_label = dq.double_original_training_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    train_model_process('./cnn_models/' + str(rate) + '/double_samples_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
 
-    # mix min
-    train_data, train_label = dq.original_and_mix_min_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    train_model_process('./cnn_models/' + str(rate) + '/mix_min_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
+    # 200/500/1000/2000/3000/5000/7000/10000
+    rates = [25 / 55000, 50 / 55000, 100 / 55000, 250 / 55000, 500 / 55000, 1000 / 55000, 1500 / 55000, 2500 / 55000,
+             3500 / 55000,
+             5000 / 55000]
+    original_rates = [25 / 55000, 50 / 55000, 100 / 55000, 250 / 55000, 500 / 55000, 1000 / 55000, 1500 / 55000,
+                      2500 / 55000,
+                      3500 / 55000,
+                      5000 / 55000]
+    sample_count = [50, 100, 200, 500, 1000, 2000, 3000, 5000, 7000, 10000]
+    for time in range(10):
+        for i in range(len(rates)):
+            if not os.path.exists('./cnn_models/' + str(sample_count[i]) + '_' + str(time)):
+                os.makedirs('./cnn_models/' + str(sample_count[i]) + '_' + str(time))
+            # double
+            train_data, train_label = dq.double_original_training_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/double_samples_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
 
-    # mix average
-    train_data, train_label = dq.original_and_mix_average_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    train_model_process('./cnn_models/' + str(rate) + '/mix_average_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
+            # mix max
+            train_data, train_label = dq.original_and_mix_max_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
 
-    # mix add
-    train_data, train_label = dq.original_and_mix_add_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    train_model_process('./cnn_models/' + str(rate) + '/mix_add_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_max_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
 
-    # vertical
-    train_data, train_label = dq.original_and_vertical_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
-    # test_data = np.reshape(test_data, (-1, 28, 28, 1))
-    train_model_process('./cnn_models/' + str(rate) + '/vertical_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
+            # mix min
+            train_data, train_label = dq.original_and_mix_min_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_min_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
 
-    # horizontal
-    train_data, train_label = dq.original_and_horizontal_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
-    # test_data = np.reshape(test_data, (-1, 28, 28, 1))
-    train_model_process('./cnn_models/' + str(rate) + '/horizontal_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
+            # mix average
+            train_data, train_label = dq.original_and_mix_average_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_average_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
 
-    # horizontal
-    train_data, train_label = dq.original_and_cross_data(rate)
-    train_data = np.reshape(train_data, (-1, 28, 28, 1))
-    train_label = np.array(train_label)
-    # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
-    # test_data = np.reshape(test_data, (-1, 28, 28, 1))
-    train_model_process('./cnn_models/' + str(rate) + '/cross_model.hdf5', train_data, train_label,
-                        test_images=test_data, test_labels=test_label)
-    # save data
-    with open('cnn_result_' + str(rate) + '.json', 'a') as outfile:
-        json.dump(result, outfile, ensure_ascii=False)
-        outfile.write('\n')
+            # mix add
+            train_data, train_label = dq.original_and_mix_add_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_add_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
+
+            # vertical
+            train_data, train_label = dq.original_and_vertical_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
+            # test_data = np.reshape(test_data, (-1, 28, 28, 1))
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/vertical_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
+
+            # horizontal
+            train_data, train_label = dq.original_and_horizontal_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
+            # test_data = np.reshape(test_data, (-1, 28, 28, 1))
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/horizontal_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
+
+            # horizontal
+            train_data, train_label = dq.original_and_cross_data(original_rates[i], rates[i])
+            train_data = np.reshape(train_data, (-1, 28, 28, 1))
+            train_label = np.array(train_label)
+            # test_data, test_label = mnist_data.test.images, mnist_data.test.labels
+            # test_data = np.reshape(test_data, (-1, 28, 28, 1))
+            train_model_process('./cnn_models/' + str(sample_count[i]) + '_' + str(time) + '/cross_model.hdf5',
+                                train_data, train_label,
+                                test_images=test_data, test_labels=test_label)
+            # save data
+            with open('cnn_result_' + str(sample_count[i]) + '_' + str(time) + '.json', 'a') as outfile:
+                json.dump(result, outfile, ensure_ascii=False)
+                outfile.write('\n')

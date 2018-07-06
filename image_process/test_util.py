@@ -3,10 +3,12 @@ import image_util as util
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import scipy.misc
 
 
 def load_data(number, index):
-    address = '../mnist/training_npy/' + str(number) + '.npy'
+    # address = '../mnist/training_npy/' + str(number) + '.npy'
+    address = '../mnist/center/npy/' + str(number) + '.npy'
     return np.load(address)[index]
 
 
@@ -85,13 +87,19 @@ def vision_join(join, image_data, direction='horizontal'):
 
 
 def test_cut2():
-    pic = load_data(3, 4).reshape(28, 28)
-    div = util.cut2part(pic, 'vertical', 7)
+    pic = load_data(0, 4).reshape(28, 28)
+    div = util.cut2part(pic, 'horizontal', 14)
+    vision_cut(pic, div)
+
+
+def test_cut2_v2():
+    pic = load_data(0, 1).reshape(28, 28)
+    div = util.cut2part(pic, 'horizontal', 14)
     vision_cut(pic, div)
 
 
 def test_cut4():
-    pic = load_data(3, 6).reshape(28, 28)
+    pic = load_data(0, 8).reshape(28, 28)
     div = util.cut4part(pic)
     vision_cut(pic, div)
 
@@ -99,6 +107,17 @@ def test_cut4():
 def test_join2():
     pic1 = load_data(3, 100).reshape(28, 28)
     pic2 = load_data(3, 200).reshape(28, 28)
+    div1 = util.cut2part(pic1, 'horizontal')
+    div2 = util.cut2part(pic2, 'horizontal')
+    # print(np.shape(div1[0]),np.shape(div2[1]))
+    join = (div1[0], div2[1])
+    image = util.join2part(join[0], join[1])
+    vision_join(join, image, 'horizontal')
+
+
+def test_join2_sample():
+    pic1 = load_data(0, 4).reshape(28, 28)
+    pic2 = load_data(0, 1).reshape(28, 28)
     div1 = util.cut2part(pic1, 'vertical')
     div2 = util.cut2part(pic2, 'vertical')
     # print(np.shape(div1[0]),np.shape(div2[1]))
@@ -108,10 +127,10 @@ def test_join2():
 
 
 def test_join4():
-    pic1 = load_data(3, 100).reshape(28, 28)
-    pic2 = load_data(3, 200).reshape(28, 28)
-    pic3 = load_data(3, 300).reshape(28, 28)
-    pic4 = load_data(3, 400).reshape(28, 28)
+    pic1 = load_data(0, 1).reshape(28, 28)
+    pic2 = load_data(0, 4).reshape(28, 28)
+    pic3 = load_data(0, 7).reshape(28, 28)
+    pic4 = load_data(0, 8).reshape(28, 28)
     div1 = util.cut4part(pic1)
     div2 = util.cut4part(pic2)
     div3 = util.cut4part(pic3)
@@ -121,24 +140,38 @@ def test_join4():
     vision_join(join, image)
 
 
-def test_center():
-    pic = load_data(8, 1).reshape(28, 28)
-    print(util.find_center(pic))
-    vision_cut(pic)
-
-
-def test_angle():
-    pic = load_data(7, 100).reshape(28, 28)
-    print(util.cal_angel(pic))
+def test_center(x, y):
+    pic = load_data(x, y).reshape(28, 28)
+    return util.find_center(pic)
     # vision_cut(pic)
 
 
-def test_rotate():
-    pic = load_data(7, 100).reshape(28, 28)
-    test = util.rotate(pic,math.pi/8)
-    vision_cut(test)
+def test_angle(x, y):
+    pic = load_data(x, y).reshape(28, 28)
+    return util.cal_angle(pic)
+    # print()
+    # vision_cut(pic)
+
+
+def test_rotate(x, y, angle):
+    pic = load_data(x, y).reshape(28, 28)
+    test = util.rotate(pic, angle)
+    # vision_cut(test)
+    return test
 
 
 if __name__ == '__main__':
     # vision(load_data(3, 3))
-    test_rotate()
+    # test_rotate()
+    # test_join2_sample()
+    # test_cut2()
+    # test_cut2_v2()
+    center1 = test_center(0, 7)
+    center2 = test_center(0, 8)
+    angle1 = test_angle(0, 7)
+    angle2 = test_angle(0, 8)
+    print(center1, center2)
+    print(angle1, angle2)
+    data = test_rotate(0, 7, angle2 - angle1)
+    save_data = util.mix(data, load_data(0, 8), mode='average', shape=(28, 28))
+    scipy.misc.toimage(save_data.reshape((28, 28)), cmin=0.0, cmax=1.0).save('test_average.png')

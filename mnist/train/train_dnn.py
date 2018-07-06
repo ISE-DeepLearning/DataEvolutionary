@@ -45,80 +45,136 @@ def model_train_process(model_save_path, train_images, train_labels, test_images
     score = model.evaluate(test_images, test_labels, verbose=0)
     print('测试集 score(val_loss): %.4f' % score[0])
     print('测试集 accuracy: %.4f' % score[1])
-    result.append({'path': model_save_path, 'acc': score[1]})
+    result.append({'path': model_save_path, 'val_loss': score[0], 'acc': score[1]})
     print("train DNN done, save at " + model_save_path)
 
 
+def retrain_process(model_path, train_images, train_labels, test_images, test_labels, batch_size=256, epochs=5):
+    pass
+
+
 if __name__ == '__main__':
-    rate = 0.1
+    # 200/500/1000/2000/3000/5000/7000/10000
+    rates = [25 / 55000, 50 / 55000, 100 / 55000, 250 / 55000, 500 / 55000, 1000 / 55000, 1500 / 55000, 2500 / 55000,
+             3500 / 55000,
+             5000 / 55000]
+    original_rates = [25 / 55000, 50 / 55000, 100 / 55000, 250 / 55000, 500 / 55000, 1000 / 55000, 1500 / 55000,
+                      2500 / 55000,
+                      3500 / 55000,
+                      5000 / 55000]
+    sample_count = [50, 100, 200, 500, 1000, 2000, 3000, 5000, 7000, 10000]
+    # rates = [1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    # original_rates = [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    # time = 'just_an_idea'
+    # for time in range(1, 10):
+    for time in range(10):
+        for i in range(len(rates)):
+            result = []
+            # if not os.path.exists(
+            #         './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(rates[i])):
+            #     os.makedirs('./dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(rates[i]))
+            if not os.path.exists('./dnn_models/' + str(sample_count[i]) + '_' + str(time)):
+                os.makedirs('./dnn_models/' + str(sample_count[i]) + '_' + str(time))
 
-    if not os.path.exists('./dnn_models/' + str(rate)):
-        os.makedirs('./dnn_models/' + str(rate))
+            # double
+            train_data, train_label = dq.double_original_training_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/double_samples_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/double_samples_model.hdf5',
+                train_data,
+                train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # mix max
-    train_data, train_label = dq.original_and_mix_max_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/mix_max_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
+            # mix max
+            train_data, train_label = dq.original_and_mix_max_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/mix_max_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_max_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # double
-    train_data, train_label = dq.double_original_training_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/double_samples_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
+            # mix min
+            train_data, train_label = dq.original_and_mix_min_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/mix_min_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_min_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # mix min
-    train_data, train_label = dq.original_and_mix_min_data(rate)
-    print(np.shape(train_data))
-    model_train_process('./dnn_models/' + str(rate) + '/mix_min_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
+            # mix average
+            train_data, train_label = dq.original_and_mix_average_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/mix_average_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_average_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # mix average
-    train_data, train_label = dq.original_and_mix_average_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/mix_average_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
+            # mix add
+            train_data, train_label = dq.original_and_mix_add_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                # rates[i]) + '/mix_add_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/mix_add_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # mix add
-    train_data, train_label = dq.original_and_mix_add_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/mix_add_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
+            # horizontal
+            train_data, train_label = dq.original_and_horizontal_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/horizontal_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/horizontal_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # horizontal
-    train_data, train_label = dq.original_and_horizontal_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/horizontal_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
+            # vertical
+            train_data, train_label = dq.original_and_vertical_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/vertical_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/vertical_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
 
-    # vertical
-    train_data, train_label = dq.original_and_vertical_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/vertical_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
-
-    # mix max
-    train_data, train_label = dq.original_and_cross_data(rate)
-    print(np.shape(train_data))
-    print(np.shape(train_label))
-    model_train_process('./dnn_models/' + str(rate) + '/cross_model.hdf5', train_data, train_label,
-                        test_images=mnist.test.images,
-                        test_labels=mnist.test.labels)
-    # save data
-    with open('dnn_result_' + str(rate) + '.json', 'a') as outfile:
-        json.dump(result, outfile, ensure_ascii=False)
-        outfile.write('\n')
+            # mix max
+            train_data, train_label = dq.original_and_cross_data(original_rates[i], rates[i])
+            print(np.shape(train_data))
+            print(np.shape(train_label))
+            model_train_process(
+                # './dnn_models/' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(
+                #     rates[i]) + '/cross_model.hdf5',
+                './dnn_models/' + str(sample_count[i]) + '_' + str(time) + '/cross_model.hdf5',
+                train_data, train_label,
+                test_images=mnist.test.images,
+                test_labels=mnist.test.labels)
+            # save data
+            with open(
+                    # 'dnn_result_' + str(sample_count[i]) + '_' + str(original_rates[i]) + '_' + str(rates[i]) + '.json',
+                    'dnn_result_' + str(sample_count[i]) + '_' + str(time) + '.json',
+                    'w') as outfile:
+                json.dump(result, outfile, ensure_ascii=False)
+                outfile.write('\n')

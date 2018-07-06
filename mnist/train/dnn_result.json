@@ -1,1 +1,0 @@
-[{"path": "./dnn_models/mix_max_model.hdf5", "acc": 0.9752}, {"path": "./dnn_models/double_samples_model.hdf5", "acc": 0.9785}, {"path": "./dnn_models/mix_min_model.hdf5", "acc": 0.968}, {"path": "./dnn_models/mix_average_model.hdf5", "acc": 0.9724}, {"path": "./dnn_models/mix_add_model.hdf5", "acc": 0.9695}]

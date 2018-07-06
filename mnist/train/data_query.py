@@ -29,7 +29,7 @@ def original_test_data():
     return images, labels
 
 
-def double_original_training_data(rate=1.0):
+def double_original_training_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -37,6 +37,8 @@ def double_original_training_data(rate=1.0):
         image_set = np.load(npy_path)
         image_set_copy = image_set.copy()
         image_set_copy = image_set_copy[0:int(len(image_set_copy) * rate)]
+        image_set = image_set[0:int((len(image_set) * original_rate))]
+
         label_set = np.zeros(shape=(len(image_set) + len(image_set_copy), 10))
         label_set[:, i] = 1
         images.extend(image_set)
@@ -47,7 +49,7 @@ def double_original_training_data(rate=1.0):
     return images, labels
 
 
-def original_and_mix_max_data(rate=1.0):
+def original_and_mix_max_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -56,6 +58,8 @@ def original_and_mix_max_data(rate=1.0):
         original_image_set = np.load(original_npy_path)
         mix_image_set = np.load(mix_npy_path)
         mix_image_set = mix_image_set[0:int(len(mix_image_set) * rate)]
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
+
         label_set = np.zeros(shape=(len(original_image_set) + len(mix_image_set), 10))
         label_set[:, i] = 1
         images.extend(original_image_set)
@@ -64,7 +68,7 @@ def original_and_mix_max_data(rate=1.0):
     return images, labels
 
 
-def original_and_mix_min_data(rate=1.0):
+def original_and_mix_min_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -73,6 +77,8 @@ def original_and_mix_min_data(rate=1.0):
         original_image_set = np.load(original_npy_path)
         mix_image_set = np.load(mix_npy_path)
         mix_image_set = mix_image_set[0:int(len(mix_image_set) * rate)]
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
+
         label_set = np.zeros(shape=(len(original_image_set) + len(mix_image_set), 10))
         label_set[:, i] = 1
         images.extend(original_image_set)
@@ -81,7 +87,7 @@ def original_and_mix_min_data(rate=1.0):
     return images, labels
 
 
-def original_and_mix_average_data(rate=1.0):
+def original_and_mix_average_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -90,6 +96,8 @@ def original_and_mix_average_data(rate=1.0):
         original_image_set = np.load(original_npy_path)
         mix_image_set = np.load(mix_npy_path)
         mix_image_set = mix_image_set[0:int(len(mix_image_set) * rate)]
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
+
         label_set = np.zeros(shape=(len(original_image_set) + len(mix_image_set), 10))
         label_set[:, i] = 1
         images.extend(original_image_set)
@@ -98,7 +106,7 @@ def original_and_mix_average_data(rate=1.0):
     return images, labels
 
 
-def original_and_mix_add_data(rate=1.0):
+def original_and_mix_add_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -107,6 +115,8 @@ def original_and_mix_add_data(rate=1.0):
         original_image_set = np.load(original_npy_path)
         mix_image_set = np.load(mix_npy_path)
         mix_image_set = mix_image_set[0:int(len(mix_image_set) * rate)]
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
+
         label_set = np.zeros(shape=(len(original_image_set) + len(mix_image_set), 10))
         label_set[:, i] = 1
         images.extend(original_image_set)
@@ -115,7 +125,7 @@ def original_and_mix_add_data(rate=1.0):
     return images, labels
 
 
-def original_and_vertical_data(rate=1.0):
+def original_and_vertical_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -124,6 +134,8 @@ def original_and_vertical_data(rate=1.0):
         original_image_set = np.load(original_npy_path)
         vertical_image_set = np.load(vertical_npy_path)
         vertical_image_set = vertical_image_set[0:int(len(vertical_image_set) * rate)]
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
+
         label_set = np.zeros(shape=(len(original_image_set) + len(vertical_image_set), 10))
         label_set[:, i] = 1
         images.extend(original_image_set)
@@ -132,7 +144,7 @@ def original_and_vertical_data(rate=1.0):
     return images, labels
 
 
-def original_and_horizontal_data(rate=1.0):
+def original_and_horizontal_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -140,6 +152,7 @@ def original_and_horizontal_data(rate=1.0):
         horizontal_npy_path = os.path.join(horizontal_data_path, str(i) + '.npy')
         original_image_set = np.load(original_npy_path)
         horizontal_image_set = np.load(horizontal_npy_path)
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
         horizontal_image_set = horizontal_image_set[0:int(len(horizontal_image_set) * rate)]
         label_set = np.zeros(shape=(len(original_image_set) + len(horizontal_image_set), 10))
         label_set[:, i] = 1
@@ -149,7 +162,7 @@ def original_and_horizontal_data(rate=1.0):
     return images, labels
 
 
-def original_and_cross_data(rate=1.0):
+def original_and_cross_data(original_rate=1.0, rate=1.0):
     images = []
     labels = []
     for i in range(10):
@@ -157,6 +170,7 @@ def original_and_cross_data(rate=1.0):
         cross_npy_path = os.path.join(vertical_data_path, str(i) + '.npy')
         original_image_set = np.load(original_npy_path)
         cross_image_set = np.load(cross_npy_path)
+        original_image_set = original_image_set[0:int((len(original_image_set) * original_rate))]
         cross_image_set = cross_image_set[0:int(len(cross_image_set) * rate)]
         label_set = np.zeros(shape=(len(original_image_set) + len(cross_image_set), 10))
         label_set[:, i] = 1
