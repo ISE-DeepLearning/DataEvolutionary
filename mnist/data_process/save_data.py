@@ -107,9 +107,9 @@ def test():
 
 
 if __name__ == '__main__':
-    # save_training_npy()
-    # save_test_npy()
+    save_training_npy()
+    save_test_npy()
     # save_training_pics()
     # save_test_pics()
-    test()
-    pass
+    # test()
+    # pass
