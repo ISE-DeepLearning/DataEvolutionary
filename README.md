@@ -34,3 +34,6 @@ This is the data evolutionary for AI test.
 - mix(array1,array2,mode=[max,average,min,add])
   return the mixed up picture
 
+
+hi
+
