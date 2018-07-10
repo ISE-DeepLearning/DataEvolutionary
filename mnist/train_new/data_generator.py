@@ -75,7 +75,7 @@ def generate_mix(original, mode='max'):
     result = np.zeros((n * (n - 1) // 2, 784))
     for i in range(n):
         for offset in range(1, n - i):
-            pic1, pic2 = original[i].exitreshape(28, 28), original[i + offset].reshape(28, 28)
+            pic1, pic2 = original[i].reshape(28, 28), original[i + offset].reshape(28, 28)
             center1, angle1 = util.find_center(pic1), util.cal_angle(pic1)
             center2, angle2 = util.find_center(pic2), util.cal_angle(pic2)
             change_angle = math.fabs(angle1 - angle2)
