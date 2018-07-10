@@ -2,13 +2,19 @@
 
 import math
 import os
+import sys
+
+sys.path.append('../../')
+
 import random
 
 import numpy as np
 
 import image_process.image_util as util
 
-import matplotlib.pyplot as plt
+# from ./../../image_process import image_util as util
+
+# import matplotlib.pyplot as plt
 
 import mnist.data_process.config as config
 
@@ -107,12 +113,12 @@ def save_data(image, number, mode):
     np.save(path, image)
 
 
-def vision(image_data):
-    im = image_data
-    fig = plt.figure()
-    plotwindow = fig.add_subplot(111)
-    plotwindow.imshow(im, cmap='gray')
-    plt.show()
+# def vision(image_data):
+#     im = image_data
+#     fig = plt.figure()
+#     plotwindow = fig.add_subplot(111)
+#     plotwindow.imshow(im, cmap='gray')
+#     plt.show()
 
 
 if __name__ == '__main__':
