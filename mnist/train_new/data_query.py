@@ -58,7 +58,7 @@ def repeat_data():
         if n > m:
             e = e[:m]
         else:
-            k = m / n
+            k = m // n
             r = m % n
             for j in range(k - 1):
                 e = np.vstack((e, np.eye(n)))

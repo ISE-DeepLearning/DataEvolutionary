@@ -72,10 +72,10 @@ note: 1. It will be better if n is relative small(n>=2)
 
 def generate_mix(original, mode='max'):
     m, n = 0, len(original)
-    result = np.zeros((n * (n - 1) / 2, 784))
+    result = np.zeros((n * (n - 1) // 2, 784))
     for i in range(n):
         for offset in range(1, n - i):
-            pic1, pic2 = original[i].reshape(28, 28), original[i + offset].reshape(28, 28)
+            pic1, pic2 = original[i].exitreshape(28, 28), original[i + offset].reshape(28, 28)
             center1, angle1 = util.find_center(pic1), util.cal_angle(pic1)
             center2, angle2 = util.find_center(pic2), util.cal_angle(pic2)
             change_angle = math.fabs(angle1 - angle2)
@@ -93,16 +93,16 @@ def generate_all(original):
     result = generate_horizontal(original)
     result = np.vstack((result, generate_vertical(original)))
     result = np.vstack((result, generate_mix(original, 'max')))
-    # result = np.vstack((result, generate_mix(original, 'min')))
+    result = np.vstack((result, generate_mix(original, 'min')))
     result = np.vstack((result, generate_mix(original, 'average')))
-    # result = np.vstack((result, generate_mix(original, 'add')))
+    result = np.vstack((result, generate_mix(original, 'add')))
     return result
 
 
 def load_data(number, n):
     # address = '../mnist/training_npy/' + str(number) + '.npy'
     address = '../training_npy/' + str(number) + '.npy'
-    return random.sample(np.load(address), n)
+    return random.sample(list(np.load(address)), n)
 
 
 def save_data(image, number, mode):
