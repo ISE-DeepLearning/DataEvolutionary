@@ -117,7 +117,7 @@ def vision(image_data):
 
 if __name__ == '__main__':
     for i in range(10):
-        data = load_data(i, 3)
+        data = load_data(i, 10)
         all = generate_all(data)
         save_data(data, i, 'original')
         save_data(all, i, 'evolution')
