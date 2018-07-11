@@ -1,6 +1,10 @@
 # -*- coding:utf-8 -*-
 import os
 import numpy as np
+import sys
+
+sys.path.append('../../')
+
 import mnist.data_process.config as config
 
 

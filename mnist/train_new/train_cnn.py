@@ -6,12 +6,14 @@ from keras.optimizers import SGD, Adam
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 import os
+import sys
+
+sys.path.append('../../')
 import data_query as dq
 import json
 import mnist.data_process.config as config
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-
 
 result = []
 
