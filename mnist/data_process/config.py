@@ -4,4 +4,5 @@ training_pics_save_path = '../training_pics/'
 test_npy_save_path = '../test_npy/'
 test_pics_save_path = '../test_pics/'
 
-exp_index = 'exp8'
+exp_index = 'exp10'
+mode = ['all']

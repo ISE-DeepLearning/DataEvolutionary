@@ -89,13 +89,24 @@ def generate_mix(original, mode='max'):
     return result
 
 
-def generate_all(original):
-    result = generate_horizontal(original)
-    result = np.vstack((result, generate_vertical(original)))
-    result = np.vstack((result, generate_mix(original, 'max')))
-    result = np.vstack((result, generate_mix(original, 'min')))
-    result = np.vstack((result, generate_mix(original, 'average')))
-    result = np.vstack((result, generate_mix(original, 'add')))
+def generate(original):
+    modes = config.mode
+    result = np.zeros(shape=(0, 784))
+    print(result)
+    for mode in modes:
+        if mode == 'all':
+            result = np.vstack((result, generate_horizontal(original)))
+            result = np.vstack((result, generate_vertical(original)))
+            result = np.vstack((result, generate_mix(original, 'max')))
+            result = np.vstack((result, generate_mix(original, 'min')))
+            result = np.vstack((result, generate_mix(original, 'average')))
+            result = np.vstack((result, generate_mix(original, 'add')))
+        elif mode == 'horizontal':
+            result = np.vstack((result, generate_horizontal(original, 'add')))
+        elif mode == 'vertical':
+            result = np.vstack((result, generate_vertical(original, 'add')))
+        else:
+            result = np.vstack((result, generate_mix(original, mode)))
     return result
 
 
@@ -124,6 +135,6 @@ def save_data(image, number, mode):
 if __name__ == '__main__':
     for i in range(10):
         data = load_data(i, 10)
-        all = generate_all(data)
+        all = generate(data)
         save_data(data, i, 'original')
         save_data(all, i, 'evolution')
