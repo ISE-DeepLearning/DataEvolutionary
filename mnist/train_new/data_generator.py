@@ -64,10 +64,28 @@ def generate_vertical(original):
 
 """
 input: matrix(n*784)
-output: matrix(2C(2,n),784)
+output: matrix(C(4,n),784)
 note: 1. It will be better if n is relative small(n>=2)
       2. The original pics should have been moved in center.
 """
+
+
+def generate_cross(original):
+    m, n = 0, len(original)
+    result = np.zeros((n * (n - 1) * (n - 2) * (n - 3) // 24, 784))
+    for n1 in range(n - 3):
+        for n2 in range(n1 + 1, n - 2):
+            for n3 in range(n2 + 1, n - 1):
+                for n4 in range(n3 + 1, n):
+                    pic1, pic2, pic3, pic4 = original[n1].reshape(28, 28), original[n2].reshape(28, 28), original[
+                        n3].reshape(28, 28), original[n4].reshape(28, 28)
+                    temp1 = util.cut4part(pic1)[0]
+                    temp2 = util.cut4part(pic2)[1]
+                    temp3 = util.cut4part(pic3)[2]
+                    temp4 = util.cut4part(pic4)[3]
+                    result[m] = util.join4part(temp1, temp2, temp3, temp4).flatten()
+                    m += 1
+    return result
 
 
 def generate_mix(original, mode='max'):
@@ -97,10 +115,13 @@ def generate(original):
         if mode == 'all':
             result = np.vstack((result, generate_horizontal(original)))
             result = np.vstack((result, generate_vertical(original)))
+            result = np.vstack((result, generate_cross(original)))
             result = np.vstack((result, generate_mix(original, 'max')))
             result = np.vstack((result, generate_mix(original, 'min')))
             result = np.vstack((result, generate_mix(original, 'average')))
             result = np.vstack((result, generate_mix(original, 'add')))
+        elif mode == 'cross':
+            result = np.vstack((result, generate_cross(original)))
         elif mode == 'horizontal':
             result = np.vstack((result, generate_horizontal(original)))
         elif mode == 'vertical':
