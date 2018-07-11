@@ -6,10 +6,11 @@ from keras.optimizers import SGD, Adam
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 import os
+import data_query as dq
 import sys
 
 sys.path.append('../../')
-import data_query as dq
+
 import json
 import mnist.data_process.config as config
 

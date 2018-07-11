@@ -102,9 +102,9 @@ def generate(original):
             result = np.vstack((result, generate_mix(original, 'average')))
             result = np.vstack((result, generate_mix(original, 'add')))
         elif mode == 'horizontal':
-            result = np.vstack((result, generate_horizontal(original, 'add')))
+            result = np.vstack((result, generate_horizontal(original)))
         elif mode == 'vertical':
-            result = np.vstack((result, generate_vertical(original, 'add')))
+            result = np.vstack((result, generate_vertical(original)))
         else:
             result = np.vstack((result, generate_mix(original, mode)))
     return result
