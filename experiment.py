@@ -11,34 +11,29 @@ import json
 
 def get_test_data():
     dataset = config.exp['dataset']
+    shape = config.exp['shape']
     images = []
     labels = []
-    if dataset == 'mnist':
-        path = config.mnist['test_dir_path']
-    else:
-        path = config.cifar10['test_dir_path']
-    for i in range(10):
+    path = config.datasets[dataset]['test_dir_path']
+    for i in range(config.exp['label_num']):
         npy_path = os.path.join(path, str(i) + '.npy')
         image_set = np.load(npy_path)
-        label_set = np.zeros(shape=(len(image_set), 10))
+        label_set = np.zeros(shape=(len(image_set), config.exp['label_num']))
         label_set[:, i] = 1
         images.extend(image_set)
         labels.extend(label_set)
-    if dataset == 'mnist':
-        images = np.reshape(np.array(images), (-1, 28, 28, 1))
-    else:
-        images = np.reshape(np.array(images), (-1, 32, 32, 3))
+    images = np.reshape(np.array(images), (-1, shape[1], shape[2], shape[0]))
     return images, np.array(labels)
 
 
 def repeat_data():
-    dataset = config.exp['dataset']
+    shape = config.exp['shape']
     images = []
     labels = []
-    for i in range(10):
+    for i in range(config.exp['label_num']):
         original_path = os.path.join(config.exp['exp_dir_path'], config.exp['exp_index'], 'origin', str(i) + '.npy')
         original_set = np.load(original_path)
-        original_label_set = np.zeros(shape=(len(original_set), 10))
+        original_label_set = np.zeros(shape=(len(original_set), config.exp['label_num']))
         original_label_set[:, i] = 1
 
         evolution_path = os.path.join(config.exp['exp_dir_path'], config.exp['exp_index'], 'evolution', str(i) + '.npy')
@@ -55,7 +50,7 @@ def repeat_data():
                 e = np.vstack((e, np.eye(n)))
             np.vstack((e, np.eye(n)[:r]))
         evolution_set = np.dot(e, original_set)
-        evolution_label_set = np.zeros(shape=(len(evolution_set), 10))
+        evolution_label_set = np.zeros(shape=(len(evolution_set), config.exp['label_num']))
         evolution_label_set[:, i] = 1
 
         images.extend(original_set)
@@ -63,46 +58,37 @@ def repeat_data():
         labels.extend(original_label_set)
         labels.extend(evolution_label_set)
 
-    if dataset == 'mnist':
-        images = np.reshape(np.array(images), (-1, 28, 28, 1))
-    else:
-        images = np.reshape(np.array(images), (-1, 32, 32, 3))
+    images = np.reshape(np.array(images), (-1, shape[1], shape[2], shape[0]))
     return images, np.array(labels)
 
 
 def evolution_data():
-    dataset = config.exp['dataset']
+    shape = config.exp['shape']
     images = []
     labels = []
-    for i in range(10):
+    for i in range(config.exp['label_num']):
         original_path = os.path.join(config.exp['exp_dir_path'], config.exp['exp_index'], 'origin', str(i) + '.npy')
         original_set = np.load(original_path)
-        original_label_set = np.zeros(shape=(len(original_set), 10))
+        original_label_set = np.zeros(shape=(len(original_set), config.exp['label_num']))
         original_label_set[:, i] = 1
 
         evolution_path = os.path.join(config.exp['exp_dir_path'], config.exp['exp_index'], 'evolution', str(i) + '.npy')
         evolution_set = np.load(evolution_path)
-        evolution_label_set = np.zeros(shape=(len(evolution_set), 10))
+        evolution_label_set = np.zeros(shape=(len(evolution_set), config.exp['label_num']))
         evolution_label_set[:, i] = 1
 
         images.extend(original_set)
         images.extend(evolution_set)
         labels.extend(original_label_set)
         labels.extend(evolution_label_set)
-    if dataset == 'mnist':
-        images = np.reshape(np.array(images), (-1, 28, 28, 1))
-    else:
-        images = np.reshape(np.array(images), (-1, 32, 32, 3))
+    images = np.reshape(np.array(images), (-1, shape[1], shape[2], shape[0]))
     return images, np.array(labels)
 
 
 def train(model_save_path, train_images, train_labels, test_images, test_labels, nb_classes=10,
           batch_size=64, epochs=5):
-    dataset = config.exp['dataset']
-    if dataset == 'mnist':
-        input_tensor = Input((28, 28, 1))
-    else:
-        input_tensor = Input((32, 32, 3))
+    shape = config.exp['shape']
+    input_tensor = Input((shape[1], shape[2], shape[0]))
     # 28*28
     temp = Conv2D(filters=32, kernel_size=(3, 3), padding='valid', use_bias=False)(input_tensor)
     temp = Activation('relu')(temp)
@@ -141,7 +127,7 @@ def train(model_save_path, train_images, train_labels, test_images, test_labels,
 
 
 if __name__ == '__main__':
-    for time in range(5):
+    for time in range(config.exp['repeat_times']):
         result = []
         test_data, test_label = get_test_data()
         model_path = os.path.join(config.exp['exp_dir_path'], config.exp['exp_index'], 'model', str(time))

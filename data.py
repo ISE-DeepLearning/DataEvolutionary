@@ -5,7 +5,6 @@ import cross
 import variation
 import config
 import os
-import save_data
 
 '''
 获取训练数据
@@ -15,66 +14,54 @@ import save_data
 获得原始数据，num是每种样本的张数
 '''
 
+shape = config.exp['shape']
+dataset = config.exp['dataset']
+upper = config.exp['upper']
 
-def get_origin(i, num, dataset='mnist'):
+
+def get_origin(i, num):
     result = []
     address = os.path.join('./', dataset, 'training_npy', str(i) + '.npy')
     data = random.sample(list(np.load(address)), num)
     result += data
-    if dataset == 'mnist':
-        return np.array(result)
-    else:
-        return np.array(result) / 255
+    return np.array(result) / upper
 
 
 # n*(n-1)
-def get_horizontal(origin, dataset='mnist'):
+def get_horizontal(origin):
     result = []
     n = len(origin)
     for i in range(n):
         for offset in range(1, n - i):
-            if dataset == 'mnist':
-                pic1, pic2 = origin[i].reshape(1, 28, 28), origin[i + offset].reshape(1, 28, 28)
-                new1, new2 = cross.exchange(pic1, pic2, (0, 0), 28, 14)
-            else:
-                pic1, pic2 = origin[i].reshape(3, 32, 32), origin[i + offset].reshape(3, 32, 32)
-                new1, new2 = cross.exchange(pic1, pic2, (0, 0), 32, 16)
+            pic1, pic2 = origin[i].reshape(shape), origin[i + offset].reshape(shape)
+            new1, new2 = cross.exchange(pic1, pic2, (0, 0), shape[1], shape[1] // 2)
             result.append(new1.flatten())
             result.append(new2.flatten())
     return np.array(result)
 
 
 # n*(n-1)
-def get_vertical(origin, dataset='mnist'):
+def get_vertical(origin):
     result = []
     n = len(origin)
     for i in range(n):
         for offset in range(1, n - i):
-            if dataset == 'mnist':
-                pic1, pic2 = origin[i].reshape(1, 28, 28), origin[i + offset].reshape(1, 28, 28)
-                new1, new2 = cross.exchange(pic1, pic2, (0, 0), 14, 28)
-            else:
-                pic1, pic2 = origin[i].reshape(3, 32, 32), origin[i + offset].reshape(3, 32, 32)
-                new1, new2 = cross.exchange(pic1, pic2, (0, 0), 16, 32)
+            pic1, pic2 = origin[i].reshape(shape), origin[i + offset].reshape(shape)
+            new1, new2 = cross.exchange(pic1, pic2, (0, 0), shape[1] // 2, shape[1])
             result.append(new1.flatten())
             result.append(new2.flatten())
     return np.array(result)
 
 
 # n*2*times
-def get_exchange(origin, dataset='mnist', times=1):
+def get_exchange(origin, times=1):
     n = len(origin)
     result = []
     for i in range(times * n):
         [pic1, pic2] = random.sample(list(origin), 2)
-        if dataset == 'mnist':
-            [pic1, pic2] = [pic1.reshape(1, 28, 28), pic2.reshape(1, 28, 28)]
-            random_point = (int(random.random() * 28), int(random.random() * 28))
-            random_w, random_h = int(random.random() * 28), int(random.random() * 28)
-        else:
-            [pic1, pic2] = [pic1.reshape(3, 32, 32), pic2.reshape(3, 32, 32)]
-            random_point = (int(random.random() * 28), int(random.random() * 28))
-            random_w, random_h = int(random.random() * 28), int(random.random() * 28)
+        [pic1, pic2] = [pic1.reshape(shape), pic2.reshape(shape)]
+        random_point = (int(random.random() * shape[1]), int(random.random() * shape[1]))
+        random_w, random_h = int(random.random() * shape[1]), int(random.random() * shape[1])
         new1, new2 = cross.exchange(pic1, pic2, random_point, random_w, random_h)
         result.append(new1.flatten())
         result.append(new2.flatten())
@@ -82,59 +69,53 @@ def get_exchange(origin, dataset='mnist', times=1):
 
 
 # n*(n-1)/2
-def get_mix(origin, mode='average', dataset='mnist'):
+def get_mix(origin, mode='average'):
     result = []
     n = len(origin)
     for i in range(n):
         for offset in range(1, n - i):
-            if dataset == 'mnist':
-                pic1, pic2 = origin[i].reshape(1, 28, 28), origin[i + offset].reshape(1, 28, 28)
-            else:
-                pic1, pic2 = origin[i].reshape(3, 32, 32), origin[i + offset].reshape(3, 32, 32)
+            pic1, pic2 = origin[i].reshape(shape), origin[i + offset].reshape(shape)
             new = cross.mix_up(pic1, pic2, mode)
             result.append(new.flatten())
     return np.array(result)
 
 
 # n*times
-def get_rotated(origin, dataset='mnist', times=2):
+def get_rotated(origin, times=2):
     n = len(origin)
     result = []
     for i in range(times * n):
         [pic] = random.sample(list(origin), 1)
-        if dataset == 'mnist':
-            pic = pic.reshape(1, 28, 28)
-        else:
-            pic = pic.reshape(3, 32, 32)
+        pic = pic.reshape(shape)
         random_angle = random.random() * 45
         new = variation.rotate(pic, random_angle)
         result.append(new.flatten())
     return np.array(result)
 
 
-def get_data(origin, dataset='mnist'):
+def get_data(origin):
     modes = config.exp['mode']
     result = []
     for mode in modes:
         if mode == 'all':
-            result += list(get_horizontal(origin, dataset))
-            result += list(get_vertical(origin, dataset))
-            result += list(get_exchange(origin, dataset))
-            result += list(get_rotated(origin, dataset))
-            result += list(get_mix(origin, 'average', dataset))
-            result += list(get_mix(origin, 'max', dataset))
-            result += list(get_mix(origin, 'min', dataset))
-            result += list(get_mix(origin, 'add', dataset))
+            result += list(get_horizontal(origin))
+            result += list(get_vertical(origin))
+            result += list(get_exchange(origin))
+            result += list(get_rotated(origin))
+            result += list(get_mix(origin, 'average'))
+            result += list(get_mix(origin, 'max'))
+            result += list(get_mix(origin, 'min'))
+            result += list(get_mix(origin, 'add'))
         elif mode == 'horizontal':
-            result += list(get_horizontal(origin, dataset))
+            result += list(get_horizontal(origin))
         elif mode == 'vertical':
-            result += list(get_vertical(origin, dataset))
+            result += list(get_vertical(origin))
         elif mode == 'exchange':
-            result += list(get_exchange(origin, dataset))
+            result += list(get_exchange(origin))
         elif mode == 'rotate':
-            result += list(get_rotated(origin, dataset))
+            result += list(get_rotated(origin))
         else:
-            result += list(get_mix(origin, mode, dataset))
+            result += list(get_mix(origin, mode))
     return np.array(result)
 
 
@@ -147,8 +128,8 @@ def save(data, label, mode):
 
 
 if __name__ == '__main__':
-    for i in range(10):
-        origin = get_origin(i, 10, config.exp['dataset'])
-        evolution = get_data(origin, config.exp['dataset'])
+    for i in range(config.exp['label_num']):
+        origin = get_origin(i, config.exp['sample_every_label'])
+        evolution = get_data(origin)
         save(origin, i, 'origin')
         save(evolution, i, 'evolution')
