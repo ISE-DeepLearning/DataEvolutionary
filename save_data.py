@@ -94,8 +94,10 @@ def visual_mnist(data):
     plt.show()
 
 
-
-
 if __name__ == '__main__':
     print(config.exp['shape'])
-    pass
+    # 建立好对应的目录
+    mkdir()
+    # 整理cifar10的数据 分为测试集和训练集合
+    save_cifar10_train()
+    save_cifar10_test()
